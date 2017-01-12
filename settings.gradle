@@ -1,0 +1,4 @@
+rootProject.name = 'bct'
+include 'CH1'
+include 'CH2'
+
