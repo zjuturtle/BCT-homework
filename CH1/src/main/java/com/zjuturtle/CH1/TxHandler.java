@@ -1,14 +1,18 @@
 package com.zjuturtle.CH1;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class TxHandler {
 
+    private UTXOPool utxoPool;
     /**
      * Creates a public ledger whose current UTXOPool (collection of unspent transaction outputs) is
      * {@code utxoPool}. This should make a copy of utxoPool by using the UTXOPool(UTXOPool uPool)
      * constructor.
      */
     public TxHandler(UTXOPool utxoPool) {
-        // IMPLEMENT THIS
+        this.utxoPool = new UTXOPool(utxoPool);
     }
 
     /**
@@ -21,8 +25,53 @@ public class TxHandler {
      *     values; and false otherwise.
      */
     public boolean isValidTx(Transaction tx) {
-        // IMPLEMENT THIS
-        return false;
+        List<Transaction.Input>  inputs  = tx.getInputs();
+        List<Transaction.Output> outputs = tx.getOutputs();
+
+        //case 1 check
+        for (Transaction.Input next : inputs){
+            UTXO tmp = new UTXO(next.prevTxHash, next.outputIndex);
+            if (!utxoPool.contains(tmp))
+                return false;
+        }
+
+        //case 2 check
+        int index = 0;
+        for (Transaction.Input next : inputs){
+            UTXO tmp = new UTXO(next.prevTxHash,next.outputIndex);
+            Transaction.Output out = utxoPool.getTxOutput(tmp);
+            if(!Crypto.verifySignature(out.address, tx.getRawDataToSign(index), next.signature))
+                return false;
+            index++;
+        }
+
+        //case 3 check
+        List<UTXO> seen = new ArrayList<>();
+        for (Transaction.Input next : inputs){
+            UTXO tmp = new UTXO(next.prevTxHash, next.outputIndex);
+            if (seen.contains(tmp))
+                return false;
+            seen.add(tmp);
+        }
+
+        //case 4 check
+        double outSum = 0.0;
+        for (Transaction.Output out : tx.getOutputs()) {
+            if (out.value < 0) return false;
+            outSum += out.value;
+        }
+
+        //case 5 check
+        double inSum = 0.0;
+        for (Transaction.Input next : tx.getInputs()) {
+            UTXO tmp = new UTXO(next.prevTxHash, next.outputIndex);
+            inSum += utxoPool.getTxOutput(tmp).value;
+        }
+
+        if (outSum > inSum)
+            return false;
+
+        return true;
     }
 
     /**
@@ -31,8 +80,31 @@ public class TxHandler {
      * updating the current UTXO pool as appropriate.
      */
     public Transaction[] handleTxs(Transaction[] possibleTxs) {
-        // IMPLEMENT THIS
-        return null;
-    }
+        int currentValidNum = 0;
+        int lastValidNum = 0;
+        List<Transaction> res = new ArrayList<>();
+        do {
+            lastValidNum = currentValidNum;
+            for (Transaction next : possibleTxs) {
+                if (isValidTx(next)) {
+                    for (Transaction.Input in : next.getInputs()) {
+                        UTXO del = new UTXO(in.prevTxHash, in.outputIndex);
+                        utxoPool.removeUTXO(del);
+                    }
 
+                    int index = 0;
+                    for (Transaction.Output out : next.getOutputs()) {
+                        UTXO add = new UTXO(next.getHash(), index);
+                        index++;
+                        utxoPool.addUTXO(add, out);
+                    }
+                    currentValidNum++;
+                    res.add(next);
+                }
+            }
+        }while(currentValidNum != lastValidNum);
+        Transaction[] resArr = new Transaction[res.size()];
+        resArr = res.toArray(resArr);
+        return resArr;
+    }
 }

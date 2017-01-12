@@ -1,4 +1,4 @@
-package com.zjuturtle.CH1
+package com.zjuturtle.CH1;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
