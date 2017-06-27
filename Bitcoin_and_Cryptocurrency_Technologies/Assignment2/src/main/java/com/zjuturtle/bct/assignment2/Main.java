@@ -1,5 +1,5 @@
 package com.zjuturtle.bct.assignment2;
-// Example of a Simulation. This test runs the nodes on a random graph.
+// Example of a Main. This test runs the nodes on a random graph.
 // At the end, it will print out the Transaction ids which each node
 // believes consensus has been reached upon. You can use this simulation to
 // test your nodes. You will want to try creating some deviant nodes and
@@ -10,7 +10,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.HashMap;
 
-public class Simulation {
+public class Main {
 
    public static void main(String[] args) {
 
