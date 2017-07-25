@@ -6,6 +6,11 @@ import java.util.List;
 public class TxHandler {
 
     private UTXOPool utxoPool;
+
+    public UTXOPool getUTXOPool(){
+        return this.utxoPool;
+    }
+
     /**
      * Creates a public ledger whose current UTXOPool (collection of unspent transaction outputs) is
      * {@code utxoPool}. This should make a copy of utxoPool by using the UTXOPool(UTXOPool uPool)
