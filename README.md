@@ -4,5 +4,6 @@
 
 * Neural Networks for Machine Learning: __Octave__
 * Bitcoin and Cryptocurrency Technologies: __java(Gradle)__ 
+* Algorithms Stanford: __Python__
 
 
