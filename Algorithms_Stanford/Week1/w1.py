@@ -107,6 +107,11 @@ def karatsuba(x: Number, y: Number) -> Number:
         return basic_multi(y, x)
     if len(y.data) == 1:
         return basic_multi(x, y)
+    while len(x.data) > len(y.data):
+        y.data.insert(0, 0)
+    while len(x.data) < len(y.data):
+        x.data.insert(0, 0)
+
     a = Number(x.data[:int(len(x.data)/2)], False)
     b = Number(x.data[int(len(x.data)/2):], False)
     c = Number(y.data[:int(len(y.data)/2)], False)
@@ -124,16 +129,21 @@ def karatsuba(x: Number, y: Number) -> Number:
     return basic_add(basic_add(tmp, ac), bd)
 
 
-a_str = '6178'
-b_str = '10997'
-a_list = []
-b_list = []
-for index in range(0, len(a_str)):
-    a_list.append(ord(a_str[index])-ord('0'))
+def main():
+    a_str = '3141592653589793238462643383279502884197169399375105820974944592'
+    b_str = '2718281828459045235360287471352662497757247093699959574966967627'
+    a_list = []
+    b_list = []
+    for index in range(0, len(a_str)):
+        a_list.append(ord(a_str[index])-ord('0'))
 
-for index in range(0, len(b_str)):
-    b_list.append(ord(b_str[index])-ord('0'))
+    for index in range(0, len(b_str)):
+        b_list.append(ord(b_str[index])-ord('0'))
 
-result = karatsuba(Number(a_list, False), Number(b_list, False))
-for i in range(0, len(result.data)):
-    print(result.data[i], end='')
+    result = karatsuba(Number(a_list, False), Number(b_list, False))
+    while result.data[0] == 0:
+        result.data = result.data[1:]
+    for i in range(0, len(result.data)):
+        print(result.data[i], end='')
+
+main()
