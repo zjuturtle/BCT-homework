@@ -76,9 +76,9 @@ def dfs(i)->int:
             if not G_explored[current_node]:
                 G_explored[current_node] = True
                 node_num += 1
-            for n in G[current_node]:
-                if not G_explored[n]:
-                    node_stack.append(n)
+                for n in G[current_node]:
+                    if not G_explored[n]:
+                        node_stack.append(n)
     return node_num
 
 
