@@ -1,4 +1,3 @@
-from typing import List
 import random
 
 best_min_cut = 0
