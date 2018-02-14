@@ -4,7 +4,7 @@ from bisect import bisect_left, bisect_right
 
 
 def main():
-    # 解压 2sum.txt 文件
+    # decompress 2sum.txt file
     with gzip.open('2sum.txt.gz', 'rb') as read, open('2sum.txt', 'wb') as write:
         shutil.copyfileobj(read, write)
 
