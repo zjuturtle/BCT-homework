@@ -8,10 +8,11 @@ def main():
     job_list = []
     with open('jobs.txt', 'r') as file:
         job_num = int(file.readlines(1)[0])
-        lines = file.readlines(job_num)
-        for line in lines:
-            line = line.split()
-            job_list.append(Job(weight=int(line[0]), length=int(line[1])))
+        while len(job_list) != job_num:
+            lines = file.readlines(3000)
+            for line in lines:
+                line = line.split()
+                job_list.append(Job(weight=int(line[0]), length=int(line[1])))
     job_list.sort(key=lambda job: job.weight/job.length, reverse=True)
     completion = 0
     time = 0

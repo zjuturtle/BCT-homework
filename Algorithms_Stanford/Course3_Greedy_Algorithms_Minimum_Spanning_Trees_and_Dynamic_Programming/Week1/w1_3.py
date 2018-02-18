@@ -1,10 +1,10 @@
 G = {}
+V = set()
 node_num = 0
-edge_num = 0
 
 
 class Item:
-    def __init__(self, key:int, val:int):
+    def __init__(self, key: int, val: int):
         self.key = key
         self.val = val
 
@@ -16,6 +16,9 @@ class Heap:
         self.__size = 0
 
     def insert(self, item: Item):
+        if self.contain_key(item.key):
+            print('!!!!!!!!already has key '+str(item.key))
+
         self.__data.append(item)
         self.__map[item.key] = len(self.__data)-1
         current_index = len(self.__data) - 1
@@ -35,13 +38,17 @@ class Heap:
 
     def pop_min(self) -> Item:
         min_item = self.__data[0]
+        self.__map.pop(min_item.key)
 
         # swap last item and first(min) item, then delete last item(min item)
         self.__data[0] = self.__data[-1]
         del self.__data[-1]
 
+        # in case heap is empty after pop
+        if 0 == len(self.__data):
+            return min_item
+
         # modify key index map
-        del self.__map[min_item.key]
         self.__map[self.__data[0].key] = 0
 
         current_index = 0
@@ -84,9 +91,12 @@ class Heap:
         self.__data[index] = self.__data[-1]
         del self.__data[-1]
 
-        # modify key index map
-        del self.__map[delete_item.key]
-        self.__map[self.__data[0].key] = index
+        # if delete item is the last item in data array
+        self.__map.pop(key)
+        if index == len(self.__data):
+            return delete_item
+
+        self.__map[self.__data[index].key] = index
 
         left_child_index = index * 2 + 1
         if left_child_index >= len(self.__data):
@@ -101,8 +111,8 @@ class Heap:
             self.__data[index] = tmp
 
             # modify key index map
-            self.__map[self.__data[father_index]] = father_index
-            self.__map[self.__data[index]] = index
+            self.__map[self.__data[father_index].key] = father_index
+            self.__map[self.__data[index].key] = index
 
             # update index and father_index
             index = father_index
@@ -118,35 +128,61 @@ class Heap:
             self.__data[index] = tmp
 
             # modify key index map
-            self.__map[self.__data[left_child_index]] = left_child_index
-            self.__map[self.__data[index]] = index
+            self.__map[self.__data[left_child_index].key] = left_child_index
+            self.__map[self.__data[index].key] = index
 
             # update index and left_child_index
             index = left_child_index
             left_child_index = index * 2 + 1
             if left_child_index >= len(self.__data):
                 break
-
         return delete_item
 
+    def contain_key(self, key: int)->bool:
+        return key in self.__map
 
-def prim_min_spanning_tree():
+
+def prim_min_spanning_tree() -> int:
     global G
+    global V
     global node_num
-    global edge_num
+    total_edge_cost = 0
 
+    # initialize
+    X = set()  # current span node
+    u = 1
+    X.add(u)
+    heap = Heap()  # for graph G=(V,E), heap = vertices of V-X
+    for v in V:
+        if v in X:
+            continue
+        if u in G[v]:
+            heap.insert(Item(key=v, val=G[v][u]))
+        else:
+            heap.insert(Item(key=v, val=9999999))
+
+    while len(X) != node_num:
+        item = heap.pop_min()  # pop min edge(u,v) from heap with u in X and v not in X
+        total_edge_cost = total_edge_cost + item.val
+        v = item.key
+        X.add(v)
+        # update heap
+        for w, cost in G[v].items():
+            if heap.contain_key(w):
+                item = heap.delete_by_key(w)
+                new_item = Item(key=w, val=min(item.val, G[v][w]))
+                heap.insert(new_item)
+
+    return total_edge_cost
 
 
 def main():
     global G
+    global V
     global node_num
-    global edge_num
-    heap = Heap()
-
     with open('edges.txt', 'r') as file:
-        meta_line = file.readline()
-        node_num = meta_line[0]
-        edge_num = meta_line[1]
+        meta_line = file.readline().split()
+        node_num = int(meta_line[0])
         for line in file.readlines():
             line = line.split()
             node1 = int(line[0])
@@ -158,6 +194,9 @@ def main():
                 G[node2] = {}
             G[node1][node2] = cost
             G[node2][node1] = cost
+            V.add(node1)
+            V.add(node2)
+    print(prim_min_spanning_tree())
 
 
 main()
