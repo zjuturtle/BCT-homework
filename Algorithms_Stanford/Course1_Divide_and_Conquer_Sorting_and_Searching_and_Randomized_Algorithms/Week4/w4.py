@@ -107,4 +107,5 @@ def main():
     print('min cut '+str(best_min_cut))
 
 
-main()
+if __name__ == "__main__":
+    main()

@@ -43,4 +43,5 @@ def main():
     print(sort_count(array)[1])
 
 
-main()
+if __name__ == "__main__":
+    main()

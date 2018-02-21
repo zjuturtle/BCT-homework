@@ -199,4 +199,5 @@ def main():
     print(prim_min_spanning_tree())
 
 
-main()
+if __name__ == "__main__":
+    main()

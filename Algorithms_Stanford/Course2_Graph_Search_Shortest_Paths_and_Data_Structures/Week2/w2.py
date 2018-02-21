@@ -5,48 +5,7 @@ class Element:
         self.value = value
 
 
-# TODO 使用 heap 加速
-class Heap:
-    def __init__(self):
-        self.__map = {}
-        self.__data = []
-        self.__size = 0
-
-    def insert(self, k: Element):
-        self.__data.append(k)
-        current_index = len(self.__data) - 1
-        while current_index != 0:
-            father_index = (current_index - 1) // 2
-            if self.__data[father_index].value > self.__data[current_index].value:
-                tmp = self.__data[father_index]
-                self.__data[father_index] = self.__data[current_index]
-                self.__data[current_index] = tmp
-            current_index = father_index
-
-    def pop_min(self) -> Element:
-        min_element = self.__data[0]
-        self.__data[0] = self.__data[-1]
-        del self.__data[-1]
-        current_index = 0
-        heap_size = len(self.__data)
-        while current_index*2 + 1 < heap_size:
-            left_index = current_index*2 + 1
-            right_index = current_index*2 + 2
-            if right_index == heap_size - 1:
-                right_index = left_index
-            min_child_index = left_index if self.__data[left_index].value < self.__data[right_index].value else right_index
-            tmp = self.__data[min_child_index]
-            self.__data[min_child_index] = self.__data[current_index]
-            self.__data[current_index] = tmp
-            current_index = min_child_index
-        return min_element
-
-    def get_min(self) -> int:
-        return self.__data[0]
-
-    def empty(self) -> bool:
-        return len(self.__data) == 0
-
+# TODO use heap to speed up
 
 G = {}
 node_max_index = 0
@@ -111,4 +70,5 @@ def main():
     dijkstra(1)
 
 
-main()
+if __name__ == "__main__":
+    main()

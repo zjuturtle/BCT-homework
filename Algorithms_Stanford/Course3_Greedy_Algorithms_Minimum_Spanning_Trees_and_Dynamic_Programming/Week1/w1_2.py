@@ -22,4 +22,5 @@ def main():
     print(completion)
 
 
-main()
+if __name__ == "__main__":
+    main()

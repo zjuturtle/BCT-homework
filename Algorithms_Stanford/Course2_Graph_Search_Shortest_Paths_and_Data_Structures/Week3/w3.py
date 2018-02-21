@@ -89,7 +89,7 @@ class HeapMax:
 
 
 def main():
-    # 从小到大排列为 [heap_max][heap_min]
+    #  elements in [heap_max] < elements in [heap_min]
     heap_min = HeapMin()
     heap_max = HeapMax()
     sum = 0
@@ -123,4 +123,5 @@ def main():
     print(sum % 10000)
 
 
-main()
+if __name__ == "__main__":
+    main()

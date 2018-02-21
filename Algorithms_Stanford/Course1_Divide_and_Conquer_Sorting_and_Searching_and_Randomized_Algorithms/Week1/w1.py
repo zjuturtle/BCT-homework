@@ -147,4 +147,5 @@ def main():
         print(result.data[i], end='')
 
 
-main()
+if __name__ == "__main__":
+    main()
