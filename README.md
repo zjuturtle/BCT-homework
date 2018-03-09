@@ -1,4 +1,6 @@
-# MOOC 课程编程作业
+# MOOC
+
+Just MOOC programming assignments.
 
 ## Coursera
 
