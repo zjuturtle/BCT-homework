@@ -2,8 +2,14 @@
 
 ## How to run
 
-There are only 3 assignments. Please use Gradle to build. 
+There are only 3 assignments. Please use Gradle to build and run. Note run assignment1 and assignment3 only print message.
 
-__TODO:Gradle build step__
+~~~bash
+gradle Assignment1:run
+gradle Assignment2:run
+gradle Assignment3:run
+~~~ 
+
+
 
 
