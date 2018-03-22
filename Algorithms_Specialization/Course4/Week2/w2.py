@@ -1,5 +1,5 @@
 import math
-from typing import List, Set
+from typing import Set
 
 
 class City:
@@ -13,6 +13,7 @@ city_num = -1
 INFINITY = 10000000
 choose_S_list = []
 dis = []
+
 
 def set_to_num(S: Set[int])->int:
     """
@@ -113,6 +114,10 @@ def tsp()->float:
 
 
 def main():
+    """
+    This implementation could be a little slow. May take about half hour or longer.
+    :return:
+    """
     global city_list
     global city_num
     global dis
