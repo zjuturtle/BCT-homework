@@ -1,6 +1,6 @@
 import gzip
 import shutil
-import time
+
 from typing import List
 
 INFINITY = 1000000

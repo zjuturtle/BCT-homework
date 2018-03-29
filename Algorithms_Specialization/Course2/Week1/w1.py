@@ -1,111 +1,102 @@
 import gzip
 import shutil
-
-f_rev = {}  # 与课程中相反
-G = {}
-G_rev = {}
-G_explored = {}
-G_rev_explored = {}
-nodeIndexMax = 0
-nodeIndexMin = 999999999
-t = 0
-finish = []
+from typing import List, Set
 
 
-def dfs_rev(i):
-    """
-    在 G_rev 上非递归版本的 DFS，为了得到正确的 f_rev 可能需要多次访问同一个节点
-    :param i: 开始节点
-    :return:
-    """
-    global t
-    global f_rev
-    global G_rev
-    global G_rev_explored
-    global finish
-    node_stack = []
+class SCCComputer:
+    def __init__(self, graph: dict):
+        self.__graph = graph
+        self.__graph_rev = {}  # same graph with edge reversed
+        self.__graph_explored = set()  # node explored
+        self.__graph_rev_explored = set()
+        self.__finish_nodes = set()    # nodes have been set finish time on first pass
+        self.__t = 0         # finish time
+        self.__f_rev = {}    # f_rev[t] = i  means node i's finish time is t
+        self.__node_set = set()  # all nodes
 
-    if i in G_rev:
-        node_stack.append(i)
-        while bool(node_stack):
-            current_node = node_stack[-1]
-            G_rev_explored[current_node] = True
-            next_node = -1
-            for n in G_rev[current_node]:
-                if G_rev_explored[n]:
-                    continue
-                node_stack.append(n)
-                next_node = n
-            if next_node == -1:
-                node_stack.pop()
-                if not finish[current_node]:
-                    t += 1
-                    f_rev[t] = current_node
-                    finish[current_node] = True
+        # fill in reverse graph
+        for from_node in graph:
+            for to_node in graph[from_node]:
+                if to_node not in self.__graph_rev:
+                    self.__graph_rev[to_node] = {}
+                if from_node not in self.__graph_rev:
+                    self.__graph_rev[from_node] = {}
+                self.__graph_rev[to_node][from_node] = graph[from_node][to_node]
+                self.__node_set.add(to_node)
+                self.__node_set.add(from_node)
 
+    def compute_scc(self)->List[Set]:
+        """
+        compute SCC on given graph
+        :return: List of SCC
+        """
+        self.__dfs_loop_rev()
+        return self.__dfs_loop()
 
-def dfs_loop_rev():
-    global t
-    global G_rev
-    global G_rev_explored
-    global nodeIndexMin
-    global nodeIndexMax
-    for i in range(nodeIndexMax, nodeIndexMin-1, -1):
-        if G_rev_explored[i]:
-            continue
-        else:
-            dfs_rev(i)
+    def __dfs_loop(self) -> List[Set]:
+        scc_list = []
+        for i in range(self.__t, 0, -1):
+            if self.__f_rev[i] not in self.__graph_explored:
 
+                scc_list.append(self.__dfs(self.__f_rev[i]))
+        return scc_list
 
-def dfs(i)->int:
-    """
-    在 G 上非递归版本的dfs
-    :param i:开始节点
-    :return:能找到的节点数目
-    """
-    global t
-    global f_rev
-    global G
-    global G_explored
-    node_stack = []
-    node_num = 0
-    if i in G:
-        node_stack.append(i)
-        while bool(node_stack):
-            current_node = node_stack.pop()
-            if not G_explored[current_node]:
-                G_explored[current_node] = True
-                node_num += 1
-                for n in G[current_node]:
-                    if not G_explored[n]:
-                        node_stack.append(n)
-    return node_num
+    def __dfs(self, i) -> Set:
+        """
+        DFS visit on self.__graph, non-recursive version
+        :param i: start node
+        :return: SCC nodes
+        """
+        node_stack = []
+        scc = set()
+        if i in self.__graph:
+            node_stack.append(i)
+            while bool(node_stack):
+                current_node = node_stack.pop()
+                if current_node not in self.__graph_explored:
+                    self.__graph_explored.add(current_node)
+                    scc.add(current_node)
+                    for n in self.__graph[current_node]:
+                        if n not in self.__graph_explored:
+                            node_stack.append(n)
+        return scc
 
+    def __dfs_loop_rev(self):
+        for i in self.__node_set:
+            if i in self.__graph_rev_explored:
+                continue
+            else:
+                self.__dfs_rev(i)
 
-def dfs_loop():
-    global t
-    global G
-    global G_explored
-    global nodeIndexMax
-    global nodeIndexMin
-    max_size = [0, 0, 0, 0, 0]
-    for i in range(nodeIndexMax - nodeIndexMin + 1, 0, -1):
-        if not G_explored[f_rev[i]]:
-            max_size.append(dfs(f_rev[i]))
-            max_size = sorted(max_size, reverse=True)[0:-1]
-    return max_size
+    def __dfs_rev(self, i: int):
+        """
+        DFS visit on self.__graph_rev, non-recursive version
+        :param i: start node
+        :return:
+        """
+        node_stack = []
+        if i in self.__graph_rev:
+            node_stack.append(i)
+            while bool(node_stack):
+                current_node = node_stack[-1]
+                self.__graph_rev_explored.add(current_node)
+                next_node = None
+                for n in self.__graph_rev[current_node]:
+                    if n in self.__graph_rev_explored:
+                        continue
+                    node_stack.append(n)
+                    next_node = n
+                if next_node is None:
+                    node_stack.pop()
+                    if current_node not in self.__finish_nodes:
+                        self.__t += 1
+                        self.__f_rev[self.__t] = current_node
+                        self.__finish_nodes.add(current_node)
 
 
 def main():
-    global G
-    global G_explored
-    global G_rev
-    global G_rev_explored
-    global nodeIndexMax
-    global nodeIndexMin
-    global finish
-
-    # 解压 SCC.txt 文件
+    G = {}
+    # decompress SCC.txt
     with gzip.open('SCC.txt.gz', 'rb') as read, open('SCC.txt', 'wb') as write:
         shutil.copyfileobj(read, write)
 
@@ -119,25 +110,14 @@ def main():
                 line = [int(line[0]), int(line[1])]
                 if not line[0] in G:
                     G[line[0]] = {}
-                if not line[1] in G_rev:
-                    G_rev[line[1]] = {}
                 if not line[1] in G:
                     G[line[1]] = {}
-                if not line[0] in G_rev:
-                    G_rev[line[0]] = {}
                 G[line[0]][line[1]] = True
-                G_rev[line[1]][line[0]] = True
-                G_explored[line[0]] = False
-                G_explored[line[1]] = False
-                G_rev_explored[line[0]] = False
-                G_rev_explored[line[1]] = False
-                nodeIndexMax = max(line[0], nodeIndexMax)
-                nodeIndexMax = max(line[1], nodeIndexMax)
-                nodeIndexMin = min(line[0], nodeIndexMin)
-                nodeIndexMin = min(line[1], nodeIndexMin)
-    finish = [False] * (nodeIndexMax+1)
-    dfs_loop_rev()
-    print('{0}'.format(','.join(map(str, dfs_loop()))))
+
+    computer = SCCComputer(graph=G)
+    scc = computer.compute_scc()
+    scc.sort(key=lambda x: len(x), reverse=True)
+    print('{0}'.format(','.join(map(lambda x: str(len(x)), scc[0:5]))))
 
 
 if __name__ == "__main__":
