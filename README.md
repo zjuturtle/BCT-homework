@@ -1,8 +1,8 @@
 # MOOC
 
-I released these solutions, which are only for your __reference purpose__. By Honor Code, you should not copy these code directly to your MOOC programming assignments.
-
 This repo is just someplace hold my MOOC program assignments solutions. Most assignments are easy to solve, but some of them are challenging.
+
+I released these solutions, which are only for your __reference purpose__. By Honor Code, you should not copy these code directly to your MOOC programming assignments.
 
 ## Coursera
 
