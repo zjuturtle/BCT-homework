@@ -9,7 +9,7 @@ I released these solutions, which are only for your __reference purpose__. By Ho
 * [Neural Networks for Machine Learning](https://www.coursera.org/learn/neural-networks/): __Octave__
 * [Bitcoin and Cryptocurrency Technologies](https://www.coursera.org/learn/cryptocurrency/): __java(Gradle)__ 
 * [Algorithms Specialization](https://www.coursera.org/specializations/algorithms): __Python__
-* [Deep Learning Specialization](https://www.coursera.org/specializations/deep-learning): __IPython Notebook__
-* [Advanced Machine Learning Specialization](https://www.coursera.org/specializations/aml): __IPython Notebook__
+* [Deep Learning Specialization](https://www.coursera.org/specializations/deep-learning): __Jupyter Notebook__
+* [Advanced Machine Learning Specialization](https://www.coursera.org/specializations/aml): __Jupyter Notebook__
 
 
