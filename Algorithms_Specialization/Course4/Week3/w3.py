@@ -32,7 +32,6 @@ def greedy_tsp()->int:
         next_city_index = -1
         min_distance = INFINITY
         for index in unvisited:
-
             d = distance_square(city_list[index], city_list[current_city_index])
             if d > min_distance:
                 continue
@@ -42,7 +41,6 @@ def greedy_tsp()->int:
                 continue
             if index < next_city_index:
                 next_city_index = index
-
         res += np.sqrt(min_distance)
         visited_count += 1
         unvisited.discard(next_city_index)
